@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="application/json; charset=utf-8">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes" name="viewport">
+
+    <title></title>
+
+    <script src="architect://architect.js"></script>
+    <script type="text/javascript" src="../ade.js"></script>
+
+    <link rel="stylesheet" href="css/default.css" />
+
+    <!-- jquery mobile CSS -->
+    <link rel="stylesheet" href="jquery/jquery.mobile-1.3.2.min.css" />
+    <!-- required to set background transparent & enable "click through" -->
+    <link rel="stylesheet" href="jquery/jquery-mobile-transparent-ui-overlay.css" />
+
+    <!-- jquery JS files -->
+    <script type="text/javascript" src="jquery/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="jquery/jquery.mobile-1.3.2.min.js"></script>
+
+</head>
+
+<body>
+
+<div data-role="page" id="page1" style="background: none;" >
+
+    <div class="ui-bar ui-bar-c" id="videoBar">
+        <a href="javascript: World.showOpacityPanel();" data-icon="gear" data-inline="true" data-mini="true">Opacity</a> Video Concept
+    </div>
+    <div class="ui-bar ui-bar-c" id="stepBar">
+        <a href="javascript: World.showStep(1);" data-inline="true" data-mini="true" id="stepButton1">1</a>
+        <a href="javascript: World.showStep(2);" data-inline="true" data-mini="true" id="stepButton2">2</a>
+        <a href="javascript: World.showStep(3);" data-inline="true" data-mini="true" id="stepButton3">3</a>
+        Step-by-Step Concept
+    </div>
+    <div class="ui-bar ui-bar-c" id="defBar">
+        <h1 id="def_head">Scanning for vehicle parts</h1>
+    </div>
+
+    <!-- opaque panel -->
+    <div data-role="panel" id="panel-opacity" data-position="left" data-display="overlay" style="background-color:#F0F0F0;" data-theme="c">
+        <!-- header with close button -->
+        <div data-role="header" data-theme="c">
+            <h1>Video Opacity</h1>
+            <a href="#header" data-rel="close">Close</a>
+        </div>
+
+        <div data-role="content">
+
+            <h4> Slide left to reduce opacity</h4>
+
+            <!-- default slider -->
+            <input id="panel-opacity-slider" type="range" data-highlight="true" name="opacitySlider" min="0.1" max="1" value="0.8" data-show-value="false" step="0.1" data-popup-enabled="false">
+        </div>
+    </div>
+
+
+    <table style="width:100%;height:100%" id="tb_steps">
+        <thead></thead>
+        <tbody>
+            <tr style="height:30%">
+                <td style="width:25%"></td>
+                <td style="width:25%"></td>
+                <td style="width:25%"></td>
+                <td style="width:25%">
+                    <div class="divstep" id="div_righttop"> PLACEHOLDER: Tools description?</div>
+                </td>
+            </tr>
+            <tr style="height:30%">
+                <td style="width:25%"></td>
+                <td style="width:25%"></td>
+                <td style="width:25%"></td>
+                <td style="width:25%"></td>
+            </tr>
+            <tr>
+                <td style="width:25%"></td>
+                <td style="width:25%"></td>
+                <td style="width:25%"></td>
+                <td style="width:25%">
+                    <div class="divstep" id="div_rightbtm"> PLACEHOLDER: Steps description?</div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <script src="js/transparentvideo.js"></script>
+
+</div>
+</body>
+</html>

@@ -27,6 +27,7 @@ public class SelectionActivity extends AppCompatActivity {
                 startARintent();
             }
         });
+
     }
     private void startARintent() {
         final Intent intent = new Intent(this, ArActivity.class);

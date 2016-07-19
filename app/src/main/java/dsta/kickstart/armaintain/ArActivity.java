@@ -15,7 +15,7 @@ import com.wikitude.architect.StartupConfiguration.CameraPosition;
 import java.io.File;
 
 public class ArActivity extends AbstractArchitectCamActivity {
-    private String FOLDERPATH = "instructAR";
+    private String FOLDERPATH = "videoAR";
 
 
     private long lastCalibrationToastShownTimeMillis = System.currentTimeMillis();

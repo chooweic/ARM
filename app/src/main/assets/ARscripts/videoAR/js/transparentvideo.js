@@ -1,5 +1,14 @@
 var World = {
 	loaded: false,
+    video1: null,
+    video1Opacity: 0.4,
+
+    currentStep: 1,
+    stepImages:new Array(3),
+    stepImagesDrawable:new Array(3),
+    toolHTMLs:["Placeholder for Tools Step 1","Placeholder for Tools Step 2","Placeholder for Tools Step 3"],
+    stepHTMLs:["Placeholder for Step 1 instructions","Placeholder for Step 2 instructions","Placeholder for Step 3 instructions"],
+
 
 	init: function initFn() {
 		this.createOverlays();
@@ -48,38 +57,73 @@ var World = {
 
 			Adding the transparent H.264 video to a target image is easy and accomplished in the same way as any other video is added. Just make sure to set the isTransparent property of the AR.VideoDrawable to true.
 		*/
-		var video = new AR.VideoDrawable("assets/transparentVideo.mp4", 0.7, {
+
+		// Section to add tracker for Instruct1. Showcase video concept
+		World.video1 = new AR.VideoDrawable("assets/transparentVideo.mp4", 0.7, {
 			offsetX: -0.2,
 			offsetY: -0.12,
-			isTransparent: true
+			isTransparent: true,
+			opacity: World.video1Opacity
 		});
-
-		// Create a button which opens a website in a browser window after a click
-		this.imgButton = new AR.ImageResource("assets/wwwButton.jpg");
-		var pageOneButton = this.createWwwButton("http://n1sco.com/specifications/", 0.1, {
-			offsetX: -0.05,
-			offsetY: 0.2,
-			zOrder: 1
-		});
-		video.play(-1);
-		video.pause();
-
-		/*
-			Adding the video to the image target is straight forward and similar like adding any other drawable to an image target.
-
-			Note that this time we use "*" as target name. That means that the AR.Trackable2DObject will respond to any target that is defined in the specified tracker. You can use wildcards to specify more complex name matchings. E.g. 'target_?' to reference 'target_1' through 'target_9' or 'target*' for any targets names that start with 'target'.
-		*/
-		var pageOne = new AR.Trackable2DObject(this.tracker, "*", {
+        World.video1.play(-1);
+		World.video1.pause();
+        var videoInstruct1 = new AR.Trackable2DObject(this.tracker, "instruct1", {
 			drawables: {
-				cam: [video, pageOneButton]
+				cam: [World.video1]
 			},
 			onEnterFieldOfVision: function onEnterFieldOfVisionFn() {
-				video.resume();
+				World.video1.resume();
+				World.showButtonBar_Video();
 			},
 			onExitFieldOfVision: function onExitFieldOfVisionFn() {
-				video.pause();
+				World.video1.pause();
+				World.resetButtonBar();
 			}
 		});
+
+
+		// Section to add tracker for Instruct2. Showcase step-by-step concept
+        this.stepImages[0] = new AR.ImageResource("assets/step1.gif");
+        this.stepImages[1] = new AR.ImageResource("assets/step2.gif");
+        this.stepImages[2] = new AR.ImageResource("assets/step3.gif");
+
+        this.stepImagesDrawable[0] = new AR.ImageDrawable(this.stepImages[0], 1, {
+                zOrder: 1
+            }
+        );
+        this.stepImagesDrawable[1] = new AR.ImageDrawable(this.stepImages[1], 1, {
+                zOrder: 2
+            }
+        );
+        this.stepImagesDrawable[2] = new AR.ImageDrawable(this.stepImages[2], 1, {
+                zOrder: 3
+            }
+        );
+        var stepInstruct2 = new AR.Trackable2DObject(this.tracker, "instruct2", {
+        			drawables: {
+        				cam: [this.stepImagesDrawable[0],this.stepImagesDrawable[1],this.stepImagesDrawable[2]]
+        			},
+        			onEnterFieldOfVision: function onEnterFieldOfVisionFn() {
+                        World.showButtonBar_Step();
+                        World.showStep(World.currentStep);
+                    },
+        			onExitFieldOfVision: function onExitFieldOfVisionFn() {
+                        World.resetButtonBar();
+                    }
+        		});
+
+
+
+		// Sample. Create a button which opens a website in a browser window after a click
+        this.imgButton = new AR.ImageResource("assets/wwwButton.jpg");
+        var pageOneButton = this.createWwwButton("http://n1sco.com/specifications/", 0.1, {
+            offsetX: -0.05,
+            offsetY: 0.2,
+            zOrder: 1
+        });
+
+
+
 	},
 
 	createWwwButton: function createWwwButtonFn(url, size, options) {
@@ -106,6 +150,7 @@ var World = {
 	},
 
 	worldLoaded: function worldLoadedFn() {
+	    /*
 		var cssDivInstructions = " style='display: table-cell;vertical-align: middle; text-align: right; width: 50%; padding-right: 15px;'";
 		var cssDivSurfer = " style='display: table-cell;vertical-align: middle; text-align: left; padding-right: 15px; width: 38px'";
 		var cssDivBiker = " style='display: table-cell;vertical-align: middle; text-align: left; padding-right: 15px;'";
@@ -119,7 +164,68 @@ var World = {
 			var e = document.getElementById('loadingMessage');
 			e.parentElement.removeChild(e);
 		}, 10000);
-	}
+		*/
+        $("#videoBar").hide();
+        $("#stepBar").hide();
+        $("#defBar").show();
+        $("#tb_steps").hide();
+	},
+
+    //defaultButtonBar: '<h1>Scanning for vehicle parts</h1>',
+
+	showButtonBar_Video: function showButtonBar_VideoFn(){
+        $("#videoBar").show();
+        $("#stepBar").hide();
+        $("#defBar").hide();
+        $("#tb_steps").hide();
+	},
+	showButtonBar_Step: function showButtonBar_VideoFn(){
+            $("#videoBar").hide();
+            $("#stepBar").show();
+            $("#defBar").hide();
+            $("#tb_steps").fadeIn();
+    },
+	resetButtonBar: function resetButtonBarFn(){
+	    $("#videoBar").hide();
+        $("#stepBar").hide();
+        $("#defBar").show();
+        $("#tb_steps").hide();
+	},
+
+    showOpacityPanel: function showOpacityPanelFn(){
+        $('#panel-opacity-slider').change(function() {
+        				World.updateOpacityValues();
+        			});
+        // open panel
+        $("#panel-opacity").trigger("updatelayout");
+        $("#panel-opacity").panel("open", 1234);
+    },
+
+    updateOpacityValues: function updateOpacityValuesFn(){
+        World.video1Opacity = $("#panel-opacity-slider").val();
+        World.video1.opacity = parseFloat(World.video1Opacity);
+    },
+
+    showStep: function showStepFn(newStep){
+
+        World.changeStepButton(World.currentStep,newStep);
+        World.changeStepDisplay(newStep);
+
+        World.currentStep = newStep;
+        for (i=0; i<3; i++){
+            World.stepImagesDrawable[i].enabled = false;
+        }
+        World.stepImagesDrawable[newStep-1].enabled = true;
+    },
+
+    changeStepButton: function changeStepButtonFn(oldStep,newStep){
+        $("#stepButton"+String(oldStep)).buttonMarkup({ theme: "c" });
+        $("#stepButton"+String(newStep)).buttonMarkup({ theme: "a" });
+    },
+    changeStepDisplay: function changeStepDisplayFn(newStep){
+        $("#div_righttop").html(World.toolHTMLs[newStep-1]);
+        $("#div_rightbtm").html(World.stepHTMLs[newStep-1]);
+    }
 };
 
 World.init();
