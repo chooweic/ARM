@@ -1,14 +1,21 @@
 var World = {
+
 	loaded: false,
+
+    // Video
     video1: null,
     video1Opacity: 0.4,
 
+    // Step-by-step
     currentStep: 1,
     stepImages:new Array(3),
     stepImagesDrawable:new Array(3),
     toolHTMLs:["Placeholder for Tools Step 1","Placeholder for Tools Step 2","Placeholder for Tools Step 3"],
     stepHTMLs:["Placeholder for Step 1 instructions","Placeholder for Step 2 instructions","Placeholder for Step 3 instructions"],
 
+    // Instruction manual
+    markerlist: new Array(4),
+    currentMarker: null,
 
 	init: function initFn() {
 		this.createOverlays();
@@ -74,6 +81,9 @@ var World = {
 			onEnterFieldOfVision: function onEnterFieldOfVisionFn() {
 				World.video1.resume();
 				World.showButtonBar_Video();
+				if (World.currentMarker !== null){
+                    World.tempClosePoiPanel();
+                };
 			},
 			onExitFieldOfVision: function onExitFieldOfVisionFn() {
 				World.video1.pause();
@@ -106,12 +116,43 @@ var World = {
         			onEnterFieldOfVision: function onEnterFieldOfVisionFn() {
                         World.showButtonBar_Step();
                         World.showStep(World.currentStep);
+                        if (World.currentMarker !== null){
+                            World.tempClosePoiPanel();
+                        };
                     },
         			onExitFieldOfVision: function onExitFieldOfVisionFn() {
                         World.resetButtonBar();
                     }
         		});
 
+
+
+
+        // Section to add multiple labels
+        this.markerlist[0] = new Marker(-0.5,-0.5,"Component A","Description B","www.dsta.gov.sg");
+        this.markerlist[1] = new Marker(-0.5,0.5,"Component B","Description B","www.dsta.gov.sg");
+        this.markerlist[2] = new Marker(0.5,-0.5,"Component C","Description C","www.dsta.gov.sg");
+        this.markerlist[3] = new Marker(0.5,0.5,"Component D","Description D","www.dsta.gov.sg");
+        var manual = new AR.Trackable2DObject(this.tracker, "overview", {
+                drawables: {
+                    cam: [
+                          this.markerlist[0].markerDrawable_idle, this.markerlist[0].markerDrawable_selected, this.markerlist[0].titleLabel, this.markerlist[0].descriptionLabel,
+                          this.markerlist[1].markerDrawable_idle, this.markerlist[1].markerDrawable_selected, this.markerlist[1].titleLabel, this.markerlist[1].descriptionLabel,
+                          this.markerlist[2].markerDrawable_idle, this.markerlist[2].markerDrawable_selected, this.markerlist[2].titleLabel, this.markerlist[2].descriptionLabel,
+                          this.markerlist[3].markerDrawable_idle, this.markerlist[3].markerDrawable_selected, this.markerlist[3].titleLabel, this.markerlist[3].descriptionLabel
+                           ]
+                },
+                //enableExtendedTracking: true,
+                onEnterFieldOfVision: function onEnterFieldOfVisionFn() {
+                      World.showButtonBar_Manual();
+                      if (World.currentMarker !== null){
+                          World.currentMarker.setSelected();
+                          World.onMarkerSelected(World.currentMarker);
+                      };
+                  },
+                onExitFieldOfVision: function onExitFieldOfVisionFn() {
+                      World.resetButtonBar();
+                  }});
 
 
 		// Sample. Create a button which opens a website in a browser window after a click
@@ -121,9 +162,34 @@ var World = {
             offsetY: 0.2,
             zOrder: 1
         });
+	},
 
+	onMarkerSelected: function onMarkerSelectedFn(marker){
+	    World.currentMarker = marker;
 
+        // update panel values
+        $("#poi-detail-title").html(marker.titleStr);
+        $("#poi-detail-description").html(marker.descStr);
 
+        // show panel
+        $("#panel-poidetail").panel("open", 123);
+
+        $(".ui-panel-dismiss").unbind("mousedown");
+
+        $("#panel-poidetail").on("panelbeforeclose", function(event, ui) {
+            if (World.currentMarker !== null) World.currentMarker.setDeselected(World.currentMarker);
+            World.currentMarker = null;
+        });
+	},
+
+    tempClosePoiPanel: function tempClosePoiPanel(){
+        cm = World.currentMarker; // Does not want currentMarker to clear upon close
+        $("#panel-poidetail").panel("close", 123);
+        World.currentMarker = cm;
+    },
+
+	onPoiDetailMoreButtonClicked: function onPoiDetailMoreButtonClickedFn(){
+        console.log(World.currentMarker.urlStr);
 	},
 
 	createWwwButton: function createWwwButtonFn(url, size, options) {
@@ -150,25 +216,10 @@ var World = {
 	},
 
 	worldLoaded: function worldLoadedFn() {
-	    /*
-		var cssDivInstructions = " style='display: table-cell;vertical-align: middle; text-align: right; width: 50%; padding-right: 15px;'";
-		var cssDivSurfer = " style='display: table-cell;vertical-align: middle; text-align: left; padding-right: 15px; width: 38px'";
-		var cssDivBiker = " style='display: table-cell;vertical-align: middle; text-align: left; padding-right: 15px;'";
-		document.getElementById('loadingMessage').innerHTML =
-			"<div" + cssDivInstructions + ">Scan Target &#35;1 (surfer) or &#35;2 (biker):</div>" +
-			"<div" + cssDivSurfer + "><img src='assets/surfer.png'></img></div>" +
-			"<div" + cssDivBiker + "><img src='assets/bike.png'></img></div>";
-
-		// Remove Scan target message after 10 sec.
-		setTimeout(function() {
-			var e = document.getElementById('loadingMessage');
-			e.parentElement.removeChild(e);
-		}, 10000);
-		*/
-        $("#videoBar").hide();
-        $("#stepBar").hide();
-        $("#defBar").show();
-        $("#tb_steps").hide();
+        World.resetButtonBar();
+        if (World.currentMarker !== null){
+            World.onMarkerSelected(World.currentMarker);
+        };
 	},
 
     //defaultButtonBar: '<h1>Scanning for vehicle parts</h1>',
@@ -176,18 +227,27 @@ var World = {
 	showButtonBar_Video: function showButtonBar_VideoFn(){
         $("#videoBar").show();
         $("#stepBar").hide();
+        $("#manualBar").hide();
         $("#defBar").hide();
         $("#tb_steps").hide();
 	},
-	showButtonBar_Step: function showButtonBar_VideoFn(){
+	showButtonBar_Step: function showButtonBar_StepFn(){
             $("#videoBar").hide();
             $("#stepBar").show();
+            $("#manualBar").hide();
             $("#defBar").hide();
             $("#tb_steps").fadeIn();
+    },
+    showButtonBar_Manual: function showButtonBar_ManualFn (){
+                $("#videoBar").hide();
+                $("#stepBar").hide();
+                $("#manualBar").show();
+                $("#defBar").hide();
     },
 	resetButtonBar: function resetButtonBarFn(){
 	    $("#videoBar").hide();
         $("#stepBar").hide();
+        $("#manualBar").hide();
         $("#defBar").show();
         $("#tb_steps").hide();
 	},

@@ -8,4 +8,10 @@
     <string name="videosrawables_fallback">VideoDrawables are rendered fullscreen on this device</string>
     <string name="urllauncher_menu_clear_history">Clear history</string>
     <string name="urllauncher_button_launch"> Launch </string>
+    <string name="introtext">This is a POC app showcasing how augmented reality can be used to aid vehicular maintenance activities.\n</string>
+    <string name="introtext2">Three User Experience concepts are demonstrated:</string>
+    <string name="introtext2a">1. <u>Instruction Manual</u>. Able to incorporate more details in the form of a digital manual. Suitable for training purpose where details are important.\n</string>
+    <string name="introtext2b">2. <u>Step-by-step guidance</u>. Step-by-step instructions where the user is able to scan through the steps required. Can pair with voice command for hands-free experience.\n</string>
+    <string name="introtext2c">3. <u>Video demonstration</u>. Watch a video demononstrating how to go about maintaining the particular component. Hands-free experience.\n</string>
+    <string name="introtext3">\n\nPress the Camera icon on the lower right to start the AR mode and point the camera on the 3 predefined pictures of vehicle. </string>
 </resources>

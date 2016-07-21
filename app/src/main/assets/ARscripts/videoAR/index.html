@@ -37,6 +37,10 @@
         <a href="javascript: World.showStep(3);" data-inline="true" data-mini="true" id="stepButton3">3</a>
         Step-by-Step Concept
     </div>
+    <div class="ui-bar ui-bar-c" id="manualBar">
+        Instruction Manual Concept
+    </div>
+
     <div class="ui-bar ui-bar-c" id="defBar">
         <h1 id="def_head">Scanning for vehicle parts</h1>
     </div>
@@ -87,7 +91,32 @@
         </tbody>
     </table>
 
+    <!-- PANELS, ONLY VISIBLE ON DEMAND -->
 
+    <!-- panel containing POI detail information -->
+    <div data-role="panel" id="panel-poidetail" data-position="right" data-display="overlay" style="background-color:#F0F0F0;" data-theme="c">
+
+        <!-- header with "close" button -->
+        <div data-role="header" data-theme="c">
+            <h1>Details</h1>
+            <a href="#header" data-rel="close">Close</a>
+        </div>
+
+        <!-- content of POI detail page, you may also add thumbnails etc. here if you like -->
+        <div data-role="content">
+
+            <!-- title -->
+            <h3 id="poi-detail-title"></h3>
+
+            <!-- description -->
+            <h4 id="poi-detail-description"></h4>
+
+            <!-- more button-->
+            <a href="javascript: World.onPoiDetailMoreButtonClicked();" data-role="button" data-icon="arrow-r" data-iconpos="right" data-inline="true">View Manual</a>
+        </div>
+    </div>
+
+    <script src="js/marker.js"></script>
     <script src="js/transparentvideo.js"></script>
 
 </div>
