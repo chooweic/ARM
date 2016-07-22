@@ -1,9 +1,58 @@
+var manualLogic = {
+    assignMarkersToTrackerTarget: function assignStepsToTrackerTargetFn(mList, tracker, targetName){
+        camList = [];
+        for (i = 0; i < markerData.length; i++){
+            mList.push(new Marker(markerData[i]));
+
+            camList.push(mList[i].markerDrawable_idle);
+            camList.push(mList[i].markerDrawable_selected);
+            camList.push(mList[i].titleLabel);
+            camList.push(mList[i].descriptionLabel);
+        }
+
+        var manual = new AR.Trackable2DObject(tracker, targetName, {
+                                drawables: {
+                                    cam: camList
+                                },
+                                //enableExtendedTracking: true,
+                                onEnterFieldOfVision: function onEnterFieldOfVisionFn() {
+                                      World.commonReset();
+                                      World.showButtonBar_Manual();
+                                      if (World.currentMarker !== null){
+                                          Marker.prototype.setSelected(World.currentMarker);
+                                          World.onMarkerSelected(World.currentMarker);
+                                      };
+                                  },
+                                onExitFieldOfVision: function onExitFieldOfVisionFn() {
+                                      World.resetButtonBar();
+                                  }});
+
+
+    }
+}
+
+
+
 var kMarker_AnimationDuration_ChangeDrawable = 500;
 var kMarker_AnimationDuration_Resize = 1000;
 
-function Marker(poiData) {
+/*
+Single Set of Marker which consists of:
+ 1) A selected ImageDrawable
+    - Contains an onclick functionality to call panel overlay
+ 2) A unselected ImageDrawable
+ 3) A title label
+ 4) A description label
 
-    this.poiData = poiData;
+ markerDrawable_idle, markerDrawable_selected, titleLabel, descriptionLabel
+ */
+function Marker(pdata) {
+    this.data = pdata;
+    this.urlStr = pdata.url;
+    this.titleStr = pdata.title;
+    this.descStr_full = pdata.desc_full;
+
+
     this.isSelected = false;
 
     /*
@@ -13,14 +62,15 @@ function Marker(poiData) {
     this.animationGroup_idle = null;
     this.animationGroup_selected = null;
 
-
     // create the AR.GeoLocation from the poi data
-    var markerLocation = new AR.GeoLocation(poiData.latitude, poiData.longitude, poiData.altitude);
+    //var markerLocation = new AR.GeoLocation(poiData.latitude, poiData.longitude, poiData.altitude);
 
     // create an AR.ImageDrawable for the marker in idle state
-    this.markerDrawable_idle = new AR.ImageDrawable(World.markerDrawable_idle, 2.5, {
+    this.markerDrawable_idle = new AR.ImageDrawable(new AR.ImageResource(pdata.imgUrl_idle), 0.25, {
         zOrder: 0,
         opacity: 1.0,
+        offsetY: pdata.offY,
+        offsetX: pdata.offX,
         /*
             To react on user interaction, an onClick property can be set for each AR.Drawable. The property is a function which will be called each time the user taps on the drawable. The function called on each tap is returned from the following helper function defined in marker.js. The function returns a function which checks the selected state with the help of the variable isSelected and executes the appropriate function. The clicked marker is passed as an argument.
         */
@@ -28,81 +78,45 @@ function Marker(poiData) {
     });
 
     // create an AR.ImageDrawable for the marker in selected state
-    this.markerDrawable_selected = new AR.ImageDrawable(World.markerDrawable_selected, 2.5, {
+    this.markerDrawable_selected = new AR.ImageDrawable( new AR.ImageResource(pdata.imgUrl), 0.25, {
         zOrder: 0,
         opacity: 0.0,
+        offsetY: pdata.offY,
+        offsetX: pdata.offX,
         onClick: null
     });
 
     // create an AR.Label for the marker's title 
-    this.titleLabel = new AR.Label(poiData.title.trunc(10), 1, {
+    this.titleLabel = new AR.Label(pdata.title.trunc(15), 0.1, {
         zOrder: 1,
-        offsetY: 0.55,
+        offsetY: 0.055 + pdata.offY,
+        offsetX: pdata.offX,
         style: {
             textColor: '#FFFFFF',
-            fontStyle: AR.CONST.FONT_STYLE.BOLD
+            fontStyle: AR.CONST.FONT_STYLE.BOLD,
+            fontSize: "x-small"
         }
     });
 
     // create an AR.Label for the marker's description
-    this.descriptionLabel = new AR.Label(poiData.description.trunc(15), 0.8, {
+    this.descriptionLabel = new AR.Label(pdata.desc_short.trunc(20), 0.08, {
         zOrder: 1,
-        offsetY: -0.55,
+        offsetY: -0.055 + pdata.offY,
+       offsetX: pdata.offX,
         style: {
-            textColor: '#FFFFFF'
+            textColor: '#FFFFFF',
+            fontSize: "xx-small"
         }
     });
 
-    /*
-        Create an AR.ImageDrawable using the AR.ImageResource for the direction indicator which was created in the World. Set options regarding the offset and anchor of the image so that it will be displayed correctly on the edge of the screen.
-    */
-    this.directionIndicatorDrawable = new AR.ImageDrawable(World.markerDrawable_directionIndicator, 0.1, {
-        enabled: false,
-        verticalAnchor: AR.CONST.VERTICAL_ANCHOR.TOP
-    });
-
-    /*
-        The representation of an AR.GeoObject in the radar is defined in its drawables set (second argument of AR.GeoObject constructor). 
-        Once drawables.radar is set the object is also shown on the radar e.g. as an AR.Circle
-    */
-    this.radarCircle = new AR.Circle(0.03, {
-        horizontalAnchor: AR.CONST.HORIZONTAL_ANCHOR.CENTER,
-        opacity: 0.8,
-        style: {
-            fillColor: "#ffffff"
-        }
-    });
-
-    /*
-        Additionally create circles with a different color for the selected state.
-    */
-    this.radarCircleSelected = new AR.Circle(0.05, {
-        horizontalAnchor: AR.CONST.HORIZONTAL_ANCHOR.CENTER,
-        opacity: 0.8,
-        style: {
-            fillColor: "#0066ff"
-        }
-    });
-
-    this.radardrawables = [];
-    this.radardrawables.push(this.radarCircle);
-
-    this.radardrawablesSelected = [];
-    this.radardrawablesSelected.push(this.radarCircleSelected);
-
-    /*  
-        Note that indicator and radar-drawables were added
-    */
-    this.markerObject = new AR.GeoObject(markerLocation, {
+    /*this.markerObject = new AR.GeoObject(markerLocation, {
         drawables: {
             cam: [this.markerDrawable_idle, this.markerDrawable_selected, this.titleLabel, this.descriptionLabel],
-            indicator: this.directionIndicatorDrawable,
-            radar: this.radardrawables
         }
     });
-
+    */
     return this;
-}
+};
 
 Marker.prototype.getOnClickTrigger = function(marker) {
 
@@ -141,7 +155,7 @@ Marker.prototype.getOnClickTrigger = function(marker) {
 */
 
 Marker.prototype.setSelected = function(marker) {
-
+    console.log(marker);
     marker.isSelected = true;
 
     if (marker.animationGroup_selected === null) {
@@ -179,11 +193,6 @@ Marker.prototype.setSelected = function(marker) {
     // sets the click trigger function for the selected state marker
     marker.markerDrawable_selected.onClick = Marker.prototype.getOnClickTrigger(marker);
 
-    // enables the direction indicator drawable for the current marker
-    marker.directionIndicatorDrawable.enabled = true;
-
-    marker.markerObject.drawables.radar = marker.radardrawablesSelected;
-
     // starts the selected-state animation
     marker.animationGroup_selected.start();
 };
@@ -191,8 +200,6 @@ Marker.prototype.setSelected = function(marker) {
 Marker.prototype.setDeselected = function(marker) {
 
     marker.isSelected = false;
-
-    marker.markerObject.drawables.radar = marker.radardrawables;
 
     if (marker.animationGroup_idle === null) {
 
@@ -228,8 +235,6 @@ Marker.prototype.setDeselected = function(marker) {
     // removes function that is set on the onClick trigger of the selected-state marker
     marker.markerDrawable_selected.onClick = null;
 
-    // disables the direction indicator drawable for the current marker
-    marker.directionIndicatorDrawable.enabled = false;
     // starts the idle-state animation
     marker.animationGroup_idle.start();
 };
