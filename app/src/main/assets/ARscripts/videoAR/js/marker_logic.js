@@ -155,7 +155,7 @@ Marker.prototype.getOnClickTrigger = function(marker) {
 */
 
 Marker.prototype.setSelected = function(marker) {
-    console.log(marker);
+//    console.log(marker);
     marker.isSelected = true;
 
     if (marker.animationGroup_selected === null) {

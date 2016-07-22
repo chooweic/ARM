@@ -73,7 +73,17 @@ var World = {
     },
 
 	onPoiDetailMoreButtonClicked: function onPoiDetailMoreButtonClickedFn(){
-        console.log(World.currentMarker.urlStr);
+        cm = World.currentMarker;
+        var architectSdkUrl = "architectsdk://markerselected?url=" + encodeURIComponent(cm.urlStr) ;
+        console.log(architectSdkUrl);
+        /*
+            The urlListener of the native project intercepts this call and parses the arguments.
+            This is the only way to pass information from JavaSCript to your native code.
+            Ensure to properly encode and decode arguments.
+            Note: you must use 'document.location = "architectsdk://...' to pass information from JavaScript to native.
+            ! This will cause an HTTP error if you didn't register a urlListener in native architectView !
+        */
+        document.location = architectSdkUrl;
 	},
 
 	createWwwButton: function createWwwButtonFn(url, size, options) {

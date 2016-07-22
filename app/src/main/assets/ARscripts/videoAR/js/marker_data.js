@@ -7,7 +7,7 @@ var markerData = [
         "title"         : "Component A",
         "desc_short"    : "",
         "desc_full"     : "Description of <b>Component A</b>. Manual link goes to dsta website",
-        "url"           : "www.dsta.gov.sg"
+        "url"           : "http://www.dsta.gov.sg"
 
     },
     {
@@ -18,7 +18,7 @@ var markerData = [
         "title"         : "Component B",
         "desc_short"    : "",
         "desc_full"     : "Description of <b>Component B</b>. Manual link goes to dsta website",
-        "url"           : "www.dsta.gov.sg"
+        "url"           : "http://www.dsta.gov.sg"
     },
     {
         "imgUrl_idle"   : "assets/marker_idle.png",
@@ -28,7 +28,7 @@ var markerData = [
         "title"         : "Component C",
         "desc_short"    : "",
         "desc_full"     : "Description of <b>Component C</b>. Manual link goes to google website",
-        "url"           : "www.google.com"
+        "url"           : "http://www.google.com"
     },
     {
         "imgUrl_idle"   : "assets/marker_idle.png",
@@ -38,6 +38,6 @@ var markerData = [
         "title"         : "Component D",
         "desc_short"    : "",
         "desc_full"     : "Description of <b>Component D</b>. Manual link goes to google website",
-        "url"           : "www.google.com"
+        "url"           : "http://www.google.com"
     }
 ]

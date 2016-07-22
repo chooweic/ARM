@@ -47,14 +47,9 @@ public class ArActivity extends AbstractArchitectCamActivity {
 
                 // pressed "More" button on POI-detail panel
                 if ("markerselected".equalsIgnoreCase(invokedUri.getHost())) {
-
-                   /* final Intent poiDetailIntent = new Intent(ArActivity.this, SamplePoiDetailActivity.class);
-                    poiDetailIntent.putExtra("poiID", String.valueOf(invokedUri.getQueryParameter("id")));
-                    poiDetailIntent.putExtra("poititle", String.valueOf(invokedUri.getQueryParameter("title")));
-                    poiDetailIntent.putExtra("poidesc", String.valueOf(invokedUri.getQueryParameter("description")));
-                    ArActivity.this.startActivity(poiDetailIntent);
-                    */
-
+                    Uri uri = Uri.parse( String.valueOf(invokedUri.getQueryParameter("url"))  );
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    startActivity(intent);
                     return true;
 
                 }
