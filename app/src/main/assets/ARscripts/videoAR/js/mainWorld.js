@@ -32,10 +32,10 @@ var World = {
         videoLogic.assignVideosToTracker(this.tracker);
 
 		// Section to add tracker for Instruct2. Showcase step-by-step concept
-        stepLogic.assignStepsToTrackerTarget(World.stepDrawableList,this.tracker,"instruct2");
+        stepLogic.assignStepsToTrackerTarget(World.stepDrawableList,this.tracker,"step");
 
         // Section to add multiple points of interest markers for manual
-        manualLogic.assignMarkersToTrackerTarget(World.markerlist,this.tracker,"overview");
+        manualLogic.assignMarkersToTrackerTarget(World.markerlist,this.tracker,"instruction");
 
 		// Sample. Create a button which opens a website in a browser window after a click
         /*

@@ -5,7 +5,7 @@ var videoData =
         "height"    : 1.0,
         "options"   : {offsetX: -0.2, offsetY: -0.12, isTransparent: true},
 
-        "targetName": "instruct1"
+        "targetName": "video"
     }
 ];
 
